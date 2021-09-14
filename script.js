@@ -11,7 +11,55 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+class Workout{
+    date = new Date();
+    id = (Date.now()+'').slice(-10);
 
+    constructor(coords, distance, duration){
+        this.coords = coords;//[lat,lng]
+        this.distance = distance;//in km
+        this.duration = duration;//in min
+        // console.log(this.distance, this.duration);
+    }
+}
+
+class Running extends Workout{
+    constructor(coords,distance, duration, cadence){
+        super(coords,distance, duration);
+        this.cadence = cadence;
+        this.calcPace();
+    }
+
+    calcPace(){
+        // calculated in min/km
+        this.pace = this.duration / this.distance;
+        return this.pace;
+    }
+}
+
+class Cycling extends Workout{
+    constructor(coords,distance, duration, elavationGain){
+        super(coords,distance, duration);
+        this.elavationGain = elavationGain;
+
+        this.calcSpeed();
+    }
+
+    calcSpeed(){
+        //calculated in km/h
+        this.speed = this.distance/(this.duration/60);
+        return this.speed;
+    }
+}
+
+const run1 = new Running([39, -12], 5.2, 24, 178);
+const cycling1 = new Cycling([39, -12], 27, 95, 523);
+console.log(run1, cycling1);
+// const work = new Workout([39, -12], 5.2, 24);
+// console.log(work);
+
+
+//#####################  APPLICATION ARCHITECTURE ##################### 
 class App {
     #map;
     #mapEvent;
@@ -42,7 +90,6 @@ class App {
         
         // load a map using leaflet.js
         this.#map = L.map('map').setView(coords, 13);
-        // console.log(this);
 
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
